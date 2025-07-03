@@ -96,7 +96,9 @@ const EventDetails = () => {
           
           {isEventCreator && (
             <div style={{ display: 'flex', gap: '1rem' }}>
-              <button className="btn btn-secondary">Edit</button>
+              <Link to={`/edit-event/${id}`} className="btn btn-secondary">
+                Edit
+              </Link>
               <button className="btn btn-danger" onClick={handleDeleteEvent}>
                 Delete
               </button>

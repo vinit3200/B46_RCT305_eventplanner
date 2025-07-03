@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import CreateEvent from './pages/CreateEvent';
+import EditEvent from './pages/EditEvent';
 import EventDetails from './pages/EventDetails';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
@@ -31,6 +32,11 @@ function App() {
                 <Route path="/create-event" element={
                   <ProtectedRoute>
                     <CreateEvent />
+                  </ProtectedRoute>
+                } />
+                <Route path="/edit-event/:id" element={
+                  <ProtectedRoute>
+                    <EditEvent />
                   </ProtectedRoute>
                 } />
                 <Route path="/profile" element={
