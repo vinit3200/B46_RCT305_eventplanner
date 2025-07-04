@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   collection, 
@@ -27,21 +26,32 @@ export const EventsProvider = ({ children }) => {
   const { currentUser } = useAuth();
 
   const createEvent = async (eventData) => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      throw new Error('You must be logged in to create an event');
+    }
     
-    const docRef = await addDoc(collection(db, 'events'), {
-      ...eventData,
-      createdBy: currentUser.uid,
-      createdAt: new Date(),
-      attendees: [],
-      rsvps: {
-        attending: [],
-        maybe: [],
-        declined: []
-      }
-    });
+    console.log('Creating event in Firestore with data:', eventData);
     
-    return docRef.id;
+    try {
+      const docRef = await addDoc(collection(db, 'events'), {
+        ...eventData,
+        createdBy: currentUser.uid,
+        createdAt: new Date(),
+        attendees: [],
+        rsvps: {
+          attending: [],
+          maybe: [],
+          declined: []
+        },
+        comments: []
+      });
+      
+      console.log('Event created successfully with ID:', docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating event in Firestore:', error);
+      throw new Error('Failed to create event: ' + error.message);
+    }
   };
 
   const updateEvent = async (eventId, updates) => {
@@ -95,6 +105,7 @@ export const EventsProvider = ({ children }) => {
       querySnapshot.forEach((doc) => {
         eventsData.push({ id: doc.id, ...doc.data() });
       });
+      console.log('Events loaded from Firestore:', eventsData.length);
       setEvents(eventsData);
       setLoading(false);
     });
