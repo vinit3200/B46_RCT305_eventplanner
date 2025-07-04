@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useEvents } from '../contexts/EventsContext';
+import EventComments from '../components/EventComments';
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -101,19 +101,34 @@ const EventDetails = () => {
 
   return (
     <div className="fade-in">
-      <div className="card">
-        <div className="event-image" style={{ height: '300px', marginBottom: '2rem' }}>
-          <div style={{ 
-            height: '100%', 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '3rem'
-          }}>
-            🎉
-          </div>
+      <div className="card animate-scale-in">
+        <div className="event-image" style={{ height: '300px', marginBottom: '2rem', overflow: 'hidden' }}>
+          {event.imageUrl ? (
+            <img 
+              src={event.imageUrl} 
+              alt={event.title}
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                transition: 'transform 0.3s ease'
+              }}
+              onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+              onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+            />
+          ) : (
+            <div style={{ 
+              height: '100%', 
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '3rem'
+            }}>
+              🎉
+            </div>
+          )}
         </div>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2rem' }}>
@@ -301,6 +316,9 @@ const EventDetails = () => {
             <div className="rsvp-label">Declined</div>
           </div>
         </div>
+
+        {/* Add Comments Section */}
+        <EventComments eventId={id} />
       </div>
 
       <div className="card">

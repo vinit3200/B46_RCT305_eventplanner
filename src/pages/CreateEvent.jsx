@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../contexts/EventsContext';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../config/firebase';
 
 const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -11,8 +13,11 @@ const CreateEvent = () => {
     time: '',
     location: '',
     category: 'social',
-    isPublic: true
+    isPublic: true,
+    imageUrl: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { createEvent } = useEvents();
@@ -26,6 +31,26 @@ const CreateEvent = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!imageFile) return '';
+    
+    const imageRef = ref(storage, `event-images/${Date.now()}-${imageFile.name}`);
+    await uploadBytes(imageRef, imageFile);
+    return await getDownloadURL(imageRef);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -33,7 +58,17 @@ const CreateEvent = () => {
       setError('');
       setLoading(true);
       
-      const eventId = await createEvent(formData);
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await uploadImage();
+      }
+      
+      const eventData = {
+        ...formData,
+        imageUrl
+      };
+      
+      const eventId = await createEvent(eventData);
       navigate(`/event/${eventId}`);
     } catch (error) {
       setError('Failed to create event. Please try again.');
@@ -53,6 +88,31 @@ const CreateEvent = () => {
         {error && <div className="alert alert-error">{error}</div>}
         
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Event Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="form-input"
+            />
+            {imagePreview && (
+              <div style={{ marginTop: '1rem' }}>
+                <img 
+                  src={imagePreview} 
+                  alt="Event preview" 
+                  style={{ 
+                    width: '100%', 
+                    maxWidth: '300px', 
+                    height: '200px', 
+                    objectFit: 'cover', 
+                    borderRadius: '8px' 
+                  }} 
+                />
+              </div>
+            )}
+          </div>
+
           <div className="form-group">
             <label className="form-label">Event Title *</label>
             <input

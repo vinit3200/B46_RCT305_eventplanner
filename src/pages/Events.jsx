@@ -8,7 +8,10 @@ const Events = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredEvents = events.filter(event => {
+  // Only show public events to all users
+  const publicEvents = events.filter(event => event.isPublic);
+
+  const filteredEvents = publicEvents.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.description.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -31,10 +34,10 @@ const Events = () => {
 
   return (
     <div className="fade-in">
-      <div className="card">
+      <div className="card animate-scale-in">
         <div className="card-header">
           <h1 className="card-title">Discover Events</h1>
-          <p className="card-subtitle">Find amazing events happening around you</p>
+          <p className="card-subtitle">Find amazing public events happening around you</p>
         </div>
         
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
@@ -60,20 +63,55 @@ const Events = () => {
       </div>
 
       {filteredEvents.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-          <h3 style={{ color: '#666', marginBottom: '1rem' }}>No events found</h3>
+        <div className="card animate-fade-in" style={{ textAlign: 'center', padding: '3rem' }}>
+          <h3 style={{ color: '#666', marginBottom: '1rem' }}>No public events found</h3>
           <p style={{ color: '#999', marginBottom: '2rem' }}>
-            {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create an event!'}
+            {searchTerm ? 'Try adjusting your search terms' : 'Be the first to create a public event!'}
           </p>
-          <Link to="/create-event" className="btn btn-primary">
+          <Link to="/create-event" className="btn btn-primary hover-scale">
             Create New Event
           </Link>
         </div>
       ) : (
         <div className="events-grid">
-          {filteredEvents.map(event => (
-            <div key={event.id} className="event-card">
-              <div className="event-image"></div>
+          {filteredEvents.map((event, index) => (
+            <div 
+              key={event.id} 
+              className="event-card animate-fade-in hover-scale"
+              style={{
+                animationDelay: `${index * 0.1}s`,
+                transform: `perspective(1000px) rotateY(${index % 2 === 0 ? '2deg' : '-2deg'})`,
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <div className="event-image" style={{ height: '200px', overflow: 'hidden' }}>
+                {event.imageUrl ? (
+                  <img 
+                    src={event.imageUrl} 
+                    alt={event.title}
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'cover',
+                      transition: 'transform 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+                  />
+                ) : (
+                  <div style={{ 
+                    height: '100%', 
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '2rem'
+                  }}>
+                    🎉
+                  </div>
+                )}
+              </div>
               <div className="event-content">
                 <h3 className="event-title">{event.title}</h3>
                 <div className="event-meta">
@@ -88,7 +126,7 @@ const Events = () => {
                   }
                 </p>
                 <div className="event-actions">
-                  <Link to={`/event/${event.id}`} className="btn btn-primary">
+                  <Link to={`/event/${event.id}`} className="btn btn-primary hover-scale">
                     View Details
                   </Link>
                   <div style={{ fontSize: '0.9rem', color: '#666' }}>
