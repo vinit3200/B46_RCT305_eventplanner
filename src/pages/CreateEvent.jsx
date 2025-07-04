@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../contexts/EventsContext';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../config/firebase';
 
 const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -13,14 +11,10 @@ const CreateEvent = () => {
     time: '',
     location: '',
     category: 'social',
-    isPublic: true,
-    imageUrl: ''
+    isPublic: true
   });
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [uploadProgress, setUploadProgress] = useState('');
   const { createEvent } = useEvents();
   const navigate = useNavigate();
 
@@ -32,131 +26,20 @@ const CreateEvent = () => {
     });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      console.log('Image file selected:', file.name, file.size);
-      
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
-        return;
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image file size must be less than 5MB');
-        return;
-      }
-      
-      setImageFile(file);
-      setError('');
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('Image preview loaded');
-        setImagePreview(e.target.result);
-      };
-      reader.onerror = () => {
-        setError('Failed to load image preview');
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const uploadImage = async () => {
-    if (!imageFile) {
-      console.log('No image file to upload');
-      return '';
-    }
-    
-    try {
-      console.log('Starting image upload...');
-      setUploadProgress('Uploading image...');
-      
-      const timestamp = Date.now();
-      const fileName = `${timestamp}-${imageFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const imageRef = ref(storage, `event-images/${fileName}`);
-      
-      console.log('Uploading to:', `event-images/${fileName}`);
-      await uploadBytes(imageRef, imageFile);
-      
-      console.log('Getting download URL...');
-      const downloadURL = await getDownloadURL(imageRef);
-      console.log('Image uploaded successfully:', downloadURL);
-      
-      setUploadProgress('');
-      return downloadURL;
-    } catch (error) {
-      console.error('Image upload failed:', error);
-      setUploadProgress('');
-      throw new Error('Failed to upload image: ' + error.message);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate required fields
-    if (!formData.title.trim()) {
-      setError('Event title is required');
-      return;
-    }
-    if (!formData.description.trim()) {
-      setError('Event description is required');
-      return;
-    }
-    if (!formData.date) {
-      setError('Event date is required');
-      return;
-    }
-    if (!formData.time) {
-      setError('Event time is required');
-      return;
-    }
-    if (!formData.location.trim()) {
-      setError('Event location is required');
-      return;
-    }
     
     try {
       setError('');
       setLoading(true);
       
-      console.log('Creating event with data:', formData);
-      
-      let imageUrl = '';
-      if (imageFile) {
-        console.log('Uploading image...');
-        imageUrl = await uploadImage();
-        console.log('Image URL received:', imageUrl);
-      }
-      
-      const eventData = {
-        ...formData,
-        imageUrl,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        location: formData.location.trim()
-      };
-      
-      console.log('Final event data:', eventData);
-      
-      const eventId = await createEvent(eventData);
-      console.log('Event created with ID:', eventId);
-      
-      if (eventId) {
-        navigate(`/event/${eventId}`);
-      } else {
-        throw new Error('Failed to create event - no ID returned');
-      }
+      const eventId = await createEvent(formData);
+      navigate(`/event/${eventId}`);
     } catch (error) {
-      console.error('Event creation failed:', error);
-      setError(error.message || 'Failed to create event. Please try again.');
-    } finally {
-      setLoading(false);
-      setUploadProgress('');
+      setError('Failed to create event. Please try again.');
     }
+    
+    setLoading(false);
   };
 
   return (
@@ -168,41 +51,8 @@ const CreateEvent = () => {
         </div>
         
         {error && <div className="alert alert-error">{error}</div>}
-        {uploadProgress && <div className="alert alert-info">{uploadProgress}</div>}
         
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Event Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="form-input"
-            />
-            <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '0.5rem' }}>
-              Choose an image to represent your event (max 5MB)
-            </p>
-            {imagePreview && (
-              <div style={{ marginTop: '1rem' }}>
-                <img 
-                  src={imagePreview} 
-                  alt="Event preview" 
-                  style={{ 
-                    width: '100%', 
-                    maxWidth: '300px', 
-                    height: '200px', 
-                    objectFit: 'cover', 
-                    borderRadius: '8px',
-                    border: '2px solid #e0e0e0'
-                  }} 
-                />
-                <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.5rem' }}>
-                  Image preview - this will be your event's main image
-                </p>
-              </div>
-            )}
-          </div>
-
           <div className="form-group">
             <label className="form-label">Event Title *</label>
             <input
@@ -307,7 +157,7 @@ const CreateEvent = () => {
               className="btn btn-primary"
               disabled={loading}
             >
-              {loading ? (uploadProgress || 'Creating Event...') : 'Create Event'}
+              {loading ? 'Creating Event...' : 'Create Event'}
             </button>
             <button 
               type="button" 
