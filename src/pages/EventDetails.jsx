@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useEvents } from '../contexts/EventsContext';
-import CommentSection from '../components/CommentSection';
 
 const EventDetails = () => {
   const { id } = useParams();
@@ -103,31 +103,17 @@ const EventDetails = () => {
     <div className="fade-in">
       <div className="card">
         <div className="event-image" style={{ height: '300px', marginBottom: '2rem' }}>
-          {event.image ? (
-            <img 
-              src={event.image} 
-              alt={event.title}
-              style={{ 
-                width: '100%',
-                height: '100%', 
-                objectFit: 'cover',
-                borderRadius: '8px'
-              }}
-            />
-          ) : (
-            <div style={{ 
-              height: '100%', 
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '3rem',
-              borderRadius: '8px'
-            }}>
-              🎉
-            </div>
-          )}
+          <div style={{ 
+            height: '100%', 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '3rem'
+          }}>
+            🎉
+          </div>
         </div>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2rem' }}>
@@ -338,8 +324,6 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
-
-      <CommentSection eventId={id} comments={event.comments || []} />
     </div>
   );
 };
