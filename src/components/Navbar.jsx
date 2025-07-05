@@ -20,7 +20,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-content">
         <Link to="/" className="navbar-brand">
-          🎉 EventHub
+          EventHub
         </Link>
         <div className="navbar-nav">
           <Link to="/" className="nav-link">Home</Link>
