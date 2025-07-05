@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   collection, 
@@ -10,9 +9,11 @@ import {
   query, 
   orderBy, 
   where,
-  onSnapshot
+  onSnapshot,
+  arrayUnion
 } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../config/firebase';
 import { useAuth } from './AuthContext';
 
 const EventsContext = createContext();
@@ -29,11 +30,20 @@ export const EventsProvider = ({ children }) => {
   const createEvent = async (eventData) => {
     if (!currentUser) return;
     
+    let imageUrl = null;
+    if (eventData.image) {
+      const imageRef = ref(storage, `events/${Date.now()}_${eventData.image.name}`);
+      const snapshot = await uploadBytes(imageRef, eventData.image);
+      imageUrl = await getDownloadURL(snapshot.ref);
+    }
+    
     const docRef = await addDoc(collection(db, 'events'), {
       ...eventData,
+      image: imageUrl,
       createdBy: currentUser.uid,
       createdAt: new Date(),
       attendees: [],
+      comments: [],
       rsvps: {
         attending: [],
         maybe: [],
@@ -42,6 +52,23 @@ export const EventsProvider = ({ children }) => {
     });
     
     return docRef.id;
+  };
+
+  const addComment = async (eventId, commentText) => {
+    if (!currentUser) return;
+    
+    const comment = {
+      id: Date.now().toString(),
+      text: commentText,
+      userId: currentUser.uid,
+      userName: currentUser.displayName || currentUser.email,
+      createdAt: new Date()
+    };
+    
+    const eventRef = doc(db, 'events', eventId);
+    await updateDoc(eventRef, {
+      comments: arrayUnion(comment)
+    });
   };
 
   const updateEvent = async (eventId, updates) => {
@@ -111,7 +138,8 @@ export const EventsProvider = ({ children }) => {
     rsvpToEvent,
     getUserEvents,
     getUpcomingEvents,
-    getPastEvents
+    getPastEvents,
+    addComment
   };
 
   return (

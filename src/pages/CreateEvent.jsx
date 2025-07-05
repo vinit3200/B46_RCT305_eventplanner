@@ -11,10 +11,12 @@ const CreateEvent = () => {
     time: '',
     location: '',
     category: 'social',
-    isPublic: true
+    isPublic: true,
+    image: null
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
   const { createEvent } = useEvents();
   const navigate = useNavigate();
 
@@ -24,6 +26,23 @@ const CreateEvent = () => {
       ...formData,
       [e.target.name]: value
     });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({
+        ...formData,
+        image: file
+      });
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -76,6 +95,30 @@ const CreateEvent = () => {
               placeholder="Describe what makes your event special..."
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Event Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="form-input"
+            />
+            {imagePreview && (
+              <div style={{ marginTop: '1rem' }}>
+                <img 
+                  src={imagePreview} 
+                  alt="Event preview" 
+                  style={{ 
+                    width: '200px', 
+                    height: '120px', 
+                    objectFit: 'cover', 
+                    borderRadius: '8px' 
+                  }} 
+                />
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
