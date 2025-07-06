@@ -80,7 +80,7 @@ const EventDetails = () => {
   return (
     <div className="fade-in">
       <div className="card">
-        <EventImage />
+        <EventImage event={event} />
         
         <EventHeader 
           event={event} 

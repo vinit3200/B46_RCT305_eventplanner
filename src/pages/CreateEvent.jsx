@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../contexts/EventsContext';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../config/firebase';
 import LocationPicker from '../components/LocationPicker';
 
 const CreateEvent = () => {
@@ -13,8 +15,11 @@ const CreateEvent = () => {
     location: '',
     locationCoordinates: null,
     category: 'social',
-    isPublic: true
+    isPublic: true,
+    imageUrl: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { createEvent } = useEvents();
@@ -26,6 +31,24 @@ const CreateEvent = () => {
       ...formData,
       [e.target.name]: value
     });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!imageFile) return '';
+    
+    const imageRef = ref(storage, `event-images/${Date.now()}_${imageFile.name}`);
+    const snapshot = await uploadBytes(imageRef, imageFile);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
   };
 
   const handleLocationSelect = (locationData) => {
@@ -43,10 +66,21 @@ const CreateEvent = () => {
       setError('');
       setLoading(true);
       
-      const eventId = await createEvent(formData);
+      let imageUrl = '';
+      if (imageFile) {
+        imageUrl = await uploadImage();
+      }
+      
+      const eventData = {
+        ...formData,
+        imageUrl
+      };
+      
+      const eventId = await createEvent(eventData);
       navigate(`/event/${eventId}`);
     } catch (error) {
       setError('Failed to create event. Please try again.');
+      console.error('Error creating event:', error);
     }
     
     setLoading(false);
@@ -86,6 +120,32 @@ const CreateEvent = () => {
               placeholder="Describe what makes your event special..."
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Event Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="form-input"
+            />
+            {imagePreview && (
+              <div style={{ marginTop: '1rem' }}>
+                <img 
+                  src={imagePreview} 
+                  alt="Event preview" 
+                  style={{ 
+                    width: '100%', 
+                    maxWidth: '300px', 
+                    height: '200px', 
+                    objectFit: 'cover', 
+                    borderRadius: '8px',
+                    border: '1px solid #ddd'
+                  }} 
+                />
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
