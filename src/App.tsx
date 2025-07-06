@@ -17,7 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 const AppContent = () => {
-  useRSVPReminders(); // Initialize reminder system
+  useRSVPReminders(); 
   
   return (
     <div className="App">

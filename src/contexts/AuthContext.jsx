@@ -50,22 +50,18 @@ export const AuthProvider = ({ children }) => {
     
     const userId = currentUser.uid;
     
-    // Delete user's events
     const eventsQuery = query(collection(db, 'events'), where('createdBy', '==', userId));
     const eventsSnapshot = await getDocs(eventsQuery);
     const deleteEventPromises = eventsSnapshot.docs.map(doc => deleteDoc(doc.ref));
     await Promise.all(deleteEventPromises);
     
-    // Delete user's comments
     const commentsQuery = query(collection(db, 'comments'), where('userId', '==', userId));
     const commentsSnapshot = await getDocs(commentsQuery);
     const deleteCommentPromises = commentsSnapshot.docs.map(doc => deleteDoc(doc.ref));
     await Promise.all(deleteCommentPromises);
     
-    // Delete user profile
     await deleteDoc(doc(db, 'users', userId));
     
-    // Delete the authentication account
     await deleteUser(currentUser);
   };
 

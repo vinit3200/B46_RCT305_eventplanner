@@ -21,7 +21,6 @@ export const useRSVPReminders = () => {
       const hoursDiff = timeDiff / (1000 * 3600);
       const daysDiff = timeDiff / (1000 * 3600 * 24);
 
-      // Show reminder 24 hours before
       if (daysDiff <= 1 && daysDiff > 0 && hoursDiff > 1) {
         showNotification(
           `Event Reminder: ${event.title}`,
@@ -30,7 +29,6 @@ export const useRSVPReminders = () => {
         );
       }
 
-      // Show reminder 1 hour before
       if (hoursDiff <= 1 && hoursDiff > 0) {
         showNotification(
           `Event Starting Soon: ${event.title}`,
@@ -42,7 +40,6 @@ export const useRSVPReminders = () => {
   };
 
   const showNotification = (title, body, eventId) => {
-    // Check if notifications are supported and permitted
     if ('Notification' in window) {
       if (Notification.permission === 'granted') {
         const notification = new Notification(title, {
@@ -66,14 +63,12 @@ export const useRSVPReminders = () => {
       }
     }
 
-    // Fallback: Show browser alert
     const showAlert = () => {
       if (window.confirm(`${title}\n\n${body}\n\nClick OK to view event details.`)) {
         window.location.href = `/event/${eventId}`;
       }
     };
 
-    // Show alert after a short delay to avoid blocking
     setTimeout(showAlert, 1000);
   };
 
@@ -86,13 +81,10 @@ export const useRSVPReminders = () => {
   };
 
   useEffect(() => {
-    // Request notification permission on first load
     requestNotificationPermission();
 
-    // Check for reminders every 5 minutes
     const interval = setInterval(checkEventReminders, 5 * 60 * 1000);
     
-    // Check immediately
     checkEventReminders();
 
     return () => clearInterval(interval);

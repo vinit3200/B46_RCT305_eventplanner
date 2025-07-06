@@ -18,7 +18,6 @@ const LocationPicker = ({ onLocationSelect, initialLocation = '' }) => {
             lng: position.coords.longitude
           };
           
-          // Use reverse geocoding with a free service (nominatim)
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`)
             .then(response => response.json())
             .then(data => {
@@ -27,7 +26,6 @@ const LocationPicker = ({ onLocationSelect, initialLocation = '' }) => {
               onLocationSelect({ address, coordinates: coords });
             })
             .catch(() => {
-              // Fallback to coordinates if reverse geocoding fails
               const address = `${coords.lat}, ${coords.lng}`;
               setLocation(address);
               onLocationSelect({ address, coordinates: coords });
