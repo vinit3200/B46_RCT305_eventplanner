@@ -3,11 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useEvents } from '../contexts/EventsContext';
+import { useRSVPReminders } from '../hooks/useRSVPReminders';
+import EventComments from '../components/EventComments';
 
 const EventDetails = () => {
   const { id } = useParams();
   const { currentUser } = useAuth();
   const { events, rsvpToEvent, deleteEvent } = useEvents();
+  const { requestNotificationPermission } = useRSVPReminders();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [userRsvp, setUserRsvp] = useState(null);
@@ -36,6 +39,11 @@ const EventDetails = () => {
     try {
       await rsvpToEvent(id, status);
       setUserRsvp(status);
+      
+      // Request notification permission when user RSVPs
+      if (status === 'attending') {
+        await requestNotificationPermission();
+      }
     } catch (error) {
       console.error('Failed to RSVP:', error);
     }
@@ -311,6 +319,23 @@ const EventDetails = () => {
           <div>
             <strong>Location:</strong>
             <p>{event.location}</p>
+            {event.locationCoordinates && (
+              <button
+                onClick={() => window.open(`https://maps.google.com/?q=${event.locationCoordinates.lat},${event.locationCoordinates.lng}`, '_blank')}
+                style={{
+                  background: 'none',
+                  border: '1px solid #667eea',
+                  color: '#667eea',
+                  padding: '0.25rem 0.5rem',
+                  borderRadius: '4px',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  marginTop: '0.5rem'
+                }}
+              >
+                📍 View on Google Maps
+              </button>
+            )}
           </div>
           <div>
             <strong>Category:</strong>
@@ -322,6 +347,8 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
+
+      <EventComments eventId={id} />
     </div>
   );
 };

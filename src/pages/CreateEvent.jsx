@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEvents } from '../contexts/EventsContext';
+import LocationPicker from '../components/LocationPicker';
 
 const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const CreateEvent = () => {
     date: '',
     time: '',
     location: '',
+    locationCoordinates: null,
     category: 'social',
     isPublic: true
   });
@@ -23,6 +25,14 @@ const CreateEvent = () => {
     setFormData({
       ...formData,
       [e.target.name]: value
+    });
+  };
+
+  const handleLocationSelect = (locationData) => {
+    setFormData({
+      ...formData,
+      location: locationData.address,
+      locationCoordinates: locationData.coordinates
     });
   };
 
@@ -104,18 +114,10 @@ const CreateEvent = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Location *</label>
-            <input
-              type="text"
-              name="location"
-              className="form-input"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Where will your event take place?"
-              required
-            />
-          </div>
+          <LocationPicker 
+            onLocationSelect={handleLocationSelect}
+            initialLocation={formData.location}
+          />
 
           <div className="form-group">
             <label className="form-label">Category</label>

@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useEvents } from '../contexts/EventsContext';
+import LocationPicker from '../components/LocationPicker';
 
 const EditEvent = () => {
   const { id } = useParams();
@@ -16,6 +16,7 @@ const EditEvent = () => {
     date: '',
     time: '',
     location: '',
+    locationCoordinates: null,
     category: 'social',
     isPublic: true
   });
@@ -33,6 +34,7 @@ const EditEvent = () => {
         date: foundEvent.date,
         time: foundEvent.time,
         location: foundEvent.location,
+        locationCoordinates: foundEvent.locationCoordinates || null,
         category: foundEvent.category,
         isPublic: foundEvent.isPublic
       });
@@ -49,6 +51,14 @@ const EditEvent = () => {
     setFormData({
       ...formData,
       [e.target.name]: value
+    });
+  };
+
+  const handleLocationSelect = (locationData) => {
+    setFormData({
+      ...formData,
+      location: locationData.address,
+      locationCoordinates: locationData.coordinates
     });
   };
 
@@ -138,18 +148,10 @@ const EditEvent = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Location *</label>
-            <input
-              type="text"
-              name="location"
-              className="form-input"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="Where will your event take place?"
-              required
-            />
-          </div>
+          <LocationPicker 
+            onLocationSelect={handleLocationSelect}
+            initialLocation={formData.location}
+          />
 
           <div className="form-group">
             <label className="form-label">Category</label>
