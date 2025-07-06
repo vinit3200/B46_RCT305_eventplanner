@@ -5,9 +5,10 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 
 const AuthContext = createContext();
@@ -44,6 +45,30 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
+  const deleteAccount = async () => {
+    if (!currentUser) return;
+    
+    const userId = currentUser.uid;
+    
+    // Delete user's events
+    const eventsQuery = query(collection(db, 'events'), where('createdBy', '==', userId));
+    const eventsSnapshot = await getDocs(eventsQuery);
+    const deleteEventPromises = eventsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deleteEventPromises);
+    
+    // Delete user's comments
+    const commentsQuery = query(collection(db, 'comments'), where('userId', '==', userId));
+    const commentsSnapshot = await getDocs(commentsQuery);
+    const deleteCommentPromises = commentsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deleteCommentPromises);
+    
+    // Delete user profile
+    await deleteDoc(doc(db, 'users', userId));
+    
+    // Delete the authentication account
+    await deleteUser(currentUser);
+  };
+
   const getUserProfile = async (uid) => {
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
@@ -74,6 +99,7 @@ export const AuthProvider = ({ children }) => {
     signup,
     login,
     logout,
+    deleteAccount,
     getUserProfile
   };
 
