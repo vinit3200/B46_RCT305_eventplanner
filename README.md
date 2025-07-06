@@ -1,7 +1,64 @@
-# Welcome to your Lovable project
+# Revamped Event Creation and Management Platform
 
-## Introduction 
+## Introduction
+This project is a modern and intuitive event creation and management platform designed for social networking app. It allows users to easily create events, manage RSVP responses, send invitations, and share event details—all with a sleek, guided frontend experience. The platform focuses on enhancing user interaction with features like event discussion threads, and dynamic maps for venue selection. 
 
+# Project Type
+Fullstack
+
+# Deployed App
+https://b46-rct-305-eventplanner-s48z.vercel.app/
+
+# Directory Structure
+my-app/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── utils/
+│   └── config/
+│   └── contexts/
+│   └── hooks/
+│   └── lib/
+│   └── App.jsx
+│   └── main.jsx
+├── .env
+├── README.md
+
+# Video Walkthrough of the project
+🎥 Click here for project walkthrough (1–3 minutes)
+
+# Video Walkthrough of the codebase
+💻 Click here for code walkthrough (1–5 minutes)
+
+# Features
+🧭 Interactive multi-step event creation wizard
+
+📍 Google Maps integration for venue selection
+
+⏰ Automated RSVP reminders
+
+🗓️ Timeline view of all events with filters and search
+
+📢 Social sharing to platforms like Twitter, Facebook
+
+💬 Comment/discussion forum for each event
+
+# Design Decisions or Assumptions
+
+Events have three types: public, private, and RSVP-only.
+
+Assumed authenticated users can create, edit, or delete their own events.
+
+Integrated Google Maps API for location precision.
+
+Built responsive design to work across desktop.
+
+## Credentials
+Demo User:
+
+Email: demo@eventhub.com
+
+Password: Demo@1234
 
 ## Installation & Getting started
 
