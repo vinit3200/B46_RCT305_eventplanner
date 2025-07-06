@@ -27,7 +27,6 @@ body {
   width: 100%;
 }
 
-/* Navbar Styles */
 .navbar {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -79,7 +78,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Button Styles */
 .btn {
   padding: 0.75rem 1.5rem;
   border: none;
@@ -124,7 +122,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* Card Styles */
 .card {
   background: white;
   border-radius: 16px;
@@ -156,7 +153,6 @@ body {
   font-size: 1rem;
 }
 
-/* Form Styles */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -192,7 +188,6 @@ body {
   min-height: 120px;
 }
 
-/* Event Card Styles */
 .event-card {
   background: white;
   border-radius: 16px;
@@ -245,7 +240,6 @@ body {
   align-items: center;
 }
 
-/* RSVP Styles */
 .rsvp-section {
   background: #f8f9fa;
   border-radius: 12px;
@@ -299,7 +293,6 @@ body {
   color: #666;
 }
 
-/* Grid Layouts */
 .events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -314,7 +307,6 @@ body {
   margin-top: 2rem;
 }
 
-/* Hero Section */
 .hero {
   text-align: center;
   padding: 4rem 2rem;
@@ -347,7 +339,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Auth Forms */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -388,7 +379,6 @@ body {
   text-decoration: underline;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;
@@ -429,7 +419,6 @@ body {
   }
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -445,7 +434,6 @@ body {
   animation: fadeIn 0.6s ease-out;
 }
 
-/* Loading States */
 .loading {
   display: flex;
   justify-content: center;
@@ -467,7 +455,6 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Error and Success Messages */
 .alert {
   padding: 1rem;
   border-radius: 8px;

@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, { displayName });
     
-    // Create user profile in Firestore
     await setDoc(doc(db, 'users', userCredential.user.uid), {
       displayName,
       email,

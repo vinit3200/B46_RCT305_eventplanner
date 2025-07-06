@@ -17,7 +17,6 @@ const EventDetails = () => {
     setEvent(foundEvent);
     
     if (foundEvent && currentUser) {
-      // Find user's current RSVP status
       if (foundEvent.rsvps.attending.includes(currentUser.uid)) {
         setUserRsvp('attending');
       } else if (foundEvent.rsvps.maybe.includes(currentUser.uid)) {
@@ -141,7 +140,6 @@ const EventDetails = () => {
           )}
         </div>
 
-        {/* Social Sharing Section - Show for private events or event creators */}
         {(!event.isPublic || isEventCreator) && (
           <div className="social-sharing" style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
             <h3 style={{ marginBottom: '1rem', color: '#333', fontSize: '1.2rem' }}>
@@ -161,7 +159,7 @@ const EventDetails = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                📘 Facebook
+               <i class="fa-brands fa-square-facebook"/> Facebook
               </button>
               <button 
                 onClick={() => handleSocialShare('twitter')}
@@ -176,7 +174,7 @@ const EventDetails = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                🐦 Twitter
+                <i class="fa-brands fa-square-twitter"/> Twitter
               </button>
               <button 
                 onClick={() => handleSocialShare('linkedin')}
@@ -191,7 +189,7 @@ const EventDetails = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                💼 LinkedIn
+                <i class="fa-brands fa-linkedin"/> LinkedIn
               </button>
               <button 
                 onClick={() => handleSocialShare('whatsapp')}
@@ -206,13 +204,13 @@ const EventDetails = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                📱 WhatsApp
+                <i class="fa-brands fa-square-whatsapp"/> WhatsApp
               </button>
               <button 
                 onClick={() => handleSocialShare('email')}
                 className="share-btn"
                 style={{ 
-                  backgroundColor: '#6c757d', 
+                  backgroundColor: 'red', 
                   color: 'white', 
                   border: 'none', 
                   padding: '0.5rem 1rem', 
@@ -221,7 +219,7 @@ const EventDetails = () => {
                   fontSize: '0.9rem'
                 }}
               >
-                📧 Email
+                <i class="fa-solid fa-envelope"/> Email
               </button>
               <button 
                 onClick={copyEventLink}

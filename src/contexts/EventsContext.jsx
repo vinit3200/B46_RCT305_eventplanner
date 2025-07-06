@@ -60,14 +60,12 @@ export const EventsProvider = ({ children }) => {
     const event = events.find(e => e.id === eventId);
     
     if (event) {
-      // Remove user from all RSVP lists first
       const updatedRsvps = {
         attending: event.rsvps.attending.filter(uid => uid !== currentUser.uid),
         maybe: event.rsvps.maybe.filter(uid => uid !== currentUser.uid),
         declined: event.rsvps.declined.filter(uid => uid !== currentUser.uid)
       };
       
-      // Add user to the appropriate list
       updatedRsvps[status].push(currentUser.uid);
       
       await updateDoc(eventRef, { rsvps: updatedRsvps });

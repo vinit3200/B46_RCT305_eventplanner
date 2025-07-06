@@ -39,7 +39,6 @@ const EditEvent = () => {
     }
   }, [id, events]);
 
-  // Check if user is authorized to edit this event
   if (event && currentUser && event.createdBy !== currentUser.uid) {
     navigate('/events');
     return null;
