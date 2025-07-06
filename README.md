@@ -1,4 +1,4 @@
-# Revamped Event Creation and Management Platform
+# Event Creation and Management Platform
 
 ## Introduction
 This project is a modern and intuitive event creation and management platform designed for social networking app. It allows users to easily create events, manage RSVP responses, send invitations, and share event details—all with a sleek, guided frontend experience. The platform focuses on enhancing user interaction with features like event discussion threads, and dynamic maps for venue selection. 
