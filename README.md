@@ -25,10 +25,10 @@ my-app/
 ├── README.md
 
 # Video Walkthrough of the project
-🎥 Click here for project walkthrough (1–3 minutes)
+🎥 (https://youtu.be/YUTnew_1muE?si=Rp03sdL-yZMU_FMJ)
 
 # Video Walkthrough of the codebase
-💻 Click here for code walkthrough (1–5 minutes)
+💻 (https://youtu.be/uKlMNgNkSS8?si=-YX15XMoEoTkQPUW)
 
 # Features
 🧭 Interactive multi-step event creation wizard
